@@ -2,7 +2,7 @@
    FIREBASE IMPORTS
    This project uses Firebase Web SDK via CDN modules.
 ========================================================= */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getFirestore,
   collection,
@@ -12,12 +12,11 @@ import {
   orderBy,
   limit,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* =========================================================
    FIREBASE CONFIG
-   Replace these placeholder values with your Firebase web app config.
-   Firebase setup guide is given after the project files.
+   Firebase config is already connected for the neon-geoguess-arena project.
 ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyA8dY8GqTueEC6wTjhAJFSqkK4In_aAoVg",
@@ -28,6 +27,30 @@ const firebaseConfig = {
   appId: "1:410876225250:web:658926590e0f91464560bb",
   measurementId: "G-WLF5ESQ53S"
 };
+
+/* =========================================================
+   FIREBASE INITIALIZATION
+   This block was missing before. FIREBASE_IS_CONFIGURED and db
+   must exist before the leaderboard functions can run.
+========================================================= */
+const FIREBASE_IS_CONFIGURED = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.projectId &&
+  !firebaseConfig.apiKey.includes("PASTE") &&
+  !firebaseConfig.projectId.includes("PASTE")
+);
+
+let firebaseApp = null;
+let db = null;
+
+if (FIREBASE_IS_CONFIGURED) {
+  try {
+    firebaseApp = initializeApp(firebaseConfig);
+    db = getFirestore(firebaseApp);
+  } catch (error) {
+    console.error("Firebase initialization failed:", error);
+  }
+}
 
 /* =========================================================
    EXAM-INSPIRED LOCATION QUESTION POOL
@@ -581,8 +604,7 @@ async function submitGlobalScore(event) {
       difficulty: difficulty.label,
       rounds: totalRounds,
       maxPossible: totalRounds * MAX_SCORE_PER_ROUND,
-      createdAt: serverTimestamp(),
-      userAgentLite: getUserAgentLite()
+      createdAt: serverTimestamp()
     });
     scoreSubmitted = true;
     showToast("Score submitted to the global leaderboard!");
