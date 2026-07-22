@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mjmbd7-spatial.github.io/Guess-the-Globe_demo1/sitemap.xml

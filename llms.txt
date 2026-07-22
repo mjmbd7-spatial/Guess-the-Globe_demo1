@@ -1,0 +1,7 @@
+# Guess the Globe
+
+Guess the Globe is a free browser-based interactive geography quiz game. Players answer exam-inspired world geography questions by clicking the correct location on a Leaflet map. The game includes multiple basemaps, country outlines, difficulty levels, countdown timers, confetti for accurate guesses, and a Firebase Firestore global leaderboard.
+
+Canonical URL: https://mjmbd7-spatial.github.io/Guess-the-Globe_demo1/
+
+Key topics: geography quiz, map guessing game, world geography, GIS game, competitive exam geography, BCS geography, GST geography, Gaokao geography, UPSC geography, Leaflet.js, Firebase Firestore.
