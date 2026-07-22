@@ -2,39 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#050816" />
-  <title>Neon GeoQuiz Arena</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="#030712" />
 
-  <!-- Leaflet CSS -->
+  <title>Guess the Globe – Geography Quiz Game with Global Leaderboard</title>
+  <meta name="description" content="Play Guess the Globe, a free interactive geography quiz game. Answer exam-inspired world geography questions by clicking locations on a Leaflet map and compete on a Firebase global leaderboard." />
+  <meta name="keywords" content="geography quiz game, map guessing game, world geography game, Leaflet game, GIS game, exam geography practice, BCS geography, GST geography, Gaokao geography, UPSC geography, global leaderboard game" />
+  <meta name="author" content="MJ MBD7 Spatial" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://mjmbd7-spatial.github.io/Guess-the-Globe_demo1/" />
+
+  <!-- GEO / local discovery metadata -->
+  <meta name="geo.region" content="BD" />
+  <meta name="geo.placename" content="Bangladesh" />
+  <meta name="application-name" content="Guess the Globe" />
+  <meta name="apple-mobile-web-app-title" content="Guess the Globe" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Guess the Globe" />
+  <meta property="og:title" content="Guess the Globe – Interactive Geography Quiz Game" />
+  <meta property="og:description" content="A neon map-based geography guessing game with exam-style questions, Leaflet basemaps, mobile-friendly UI, and Firebase global leaderboard." />
+  <meta property="og:url" content="https://mjmbd7-spatial.github.io/Guess-the-Globe_demo1/" />
+  <meta property="og:image" content="https://mjmbd7-spatial.github.io/Guess-the-Globe_demo1/og-image.png" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Guess the Globe – Geography Quiz Game" />
+  <meta name="twitter:description" content="Click the map to answer exam-inspired geography questions and compete on a global leaderboard." />
+  <meta name="twitter:image" content="https://mjmbd7-spatial.github.io/Guess-the-Globe_demo1/og-image.png" />
+
+  <!-- Structured data for search engines and generative engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["WebApplication", "Game", "LearningResource"],
+    "name": "Guess the Globe",
+    "alternateName": "Neon GeoQuiz Arena",
+    "url": "https://mjmbd7-spatial.github.io/Guess-the-Globe_demo1/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any modern browser",
+    "description": "An interactive Leaflet-based geography quiz game where players answer exam-inspired world geography questions by clicking locations on a map and submitting scores to a Firebase global leaderboard.",
+    "learningResourceType": "Interactive geography quiz",
+    "educationalLevel": "Secondary, Higher secondary, Competitive exam preparation",
+    "keywords": ["geography quiz", "map game", "world geography", "BCS geography", "GST geography", "Gaokao geography", "UPSC geography", "GIS", "Leaflet"],
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "creator": {
+      "@type": "Organization",
+      "name": "MJ MBD7 Spatial"
+    }
+  }
+  </script>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="loadingScreen" class="loading-screen" aria-live="polite">
-    <div class="loader-ring"></div>
+  <noscript>This geography quiz game needs JavaScript enabled to run the interactive map and leaderboard.</noscript>
+
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loader"></div>
     <h1>Loading GeoQuiz Arena</h1>
-    <p>Preparing map, countries, and global leaderboard...</p>
+    <p>Preparing map, questions, and global leaderboard...</p>
   </div>
 
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
   <main class="app">
-    <div id="map" aria-label="Interactive world map"></div>
+    <h1 class="sr-only">Guess the Globe interactive geography quiz game</h1>
+    <div id="map" role="application" aria-label="Interactive world map for geography guessing game"></div>
 
-    <section id="toast" class="toast hidden" role="status"></section>
-
-    <section id="gameHud" class="game-hud hidden" aria-label="Game status">
+    <section id="gameHud" class="game-hud hidden" aria-label="Game question and score panel">
       <div class="hud-card question-card">
-        <span class="hud-label">🧠 Exam-style geography question</span>
-        <h2 id="questionText">Question appears here</h2>
-        <p id="questionMeta">Category • Source style</p>
+        <span class="label">🌍 Question</span>
+        <h2 id="questionText">Click Play Game to start.</h2>
+        <p id="questionMeta">Exam-inspired geography guessing challenge</p>
       </div>
 
       <div class="hud-card stats-card">
@@ -43,15 +93,13 @@
         <div class="stat"><span>Timer</span><strong id="timerDisplay">30s</strong></div>
       </div>
 
-      <div class="hud-actions">
-        <button id="restartTopBtn" class="neon-btn ghost" type="button">↻ Restart</button>
-      </div>
+      <button id="restartTopBtn" class="btn ghost" type="button">↻ Restart</button>
     </section>
 
     <section id="mapTools" class="map-tools hidden" aria-label="Map settings">
       <label>
-        <span>🗺️ Basemap</span>
-        <select id="basemapSelect">
+        🗺️ Basemap
+        <select id="basemapSelect" aria-label="Choose basemap">
           <option value="dark">Neon Dark</option>
           <option value="light">Clean Light</option>
           <option value="osm">Classic OSM</option>
@@ -59,35 +107,31 @@
           <option value="satellite">Satellite</option>
         </select>
       </label>
-
       <label>
-        <span>🔍 Max zoom: <b id="maxZoomValue">12</b></span>
-        <input id="maxZoomRange" type="range" min="5" max="18" value="12" />
+        🔍 Max zoom: <b id="maxZoomValue">12</b>
+        <input id="maxZoomRange" type="range" min="4" max="18" value="12" aria-label="Maximum map zoom" />
       </label>
     </section>
 
     <section id="startScreen" class="screen-overlay">
       <div class="glass-card start-card">
-        <div class="game-logo">🌐</div>
-        <h1>Neon GeoQuiz Arena</h1>
-        <p class="lead">Answer geography questions by clicking the correct place on the map. Built with Leaflet, Firebase Firestore, multiple basemaps, mobile-first UI, and a global leaderboard.</p>
+        <div class="logo">🌐</div>
+        <h1>Guess the Globe</h1>
+        <p>Answer exam-inspired geography questions by clicking the correct place on the map. Built with Leaflet, Firebase Firestore, multiple basemaps, neon UI, Android-friendly controls, and a global leaderboard.</p>
 
-        <div id="firebaseStatus" class="status-card warning">
-          ⚠️ Firebase is not configured yet. The game will still run, but the global leaderboard needs your Firebase config.
-        </div>
+        <div id="firebaseStatus" class="status-card warning">Checking Firebase connection...</div>
 
-        <div class="settings-grid">
+        <div class="form-grid">
           <label>
-            <span>Difficulty</span>
+            Difficulty
             <select id="difficultySelect">
-              <option value="easy">Easy — 45s, flexible zoom</option>
+              <option value="easy">Easy — 45s</option>
               <option value="medium" selected>Medium — 30s</option>
-              <option value="hard">Hard — 18s, stricter zoom</option>
+              <option value="hard">Hard — 18s</option>
             </select>
           </label>
-
           <label>
-            <span>Rounds</span>
+            Rounds
             <select id="roundCountSelect">
               <option value="5" selected>5 rounds</option>
               <option value="10">10 rounds</option>
@@ -97,13 +141,12 @@
         </div>
 
         <div class="feature-grid">
-          <div><strong>🏆</strong><span>Global leaderboard</span></div>
-          <div><strong>📱</strong><span>Android friendly</span></div>
-          <div><strong>🛰️</strong><span>Basemap variety</span></div>
-          <div><strong>🎉</strong><span>Confetti rewards</span></div>
+          <div>📍<span>Click map</span></div>
+          <div>🧠<span>Exam-style questions</span></div>
+          <div>🏆<span>Global leaderboard</span></div>
         </div>
 
-        <button id="playBtn" class="neon-btn" type="button">▶ Play Game</button>
+        <button id="playBtn" class="btn primary" type="button">▶ Play Game</button>
       </div>
     </section>
 
@@ -111,53 +154,47 @@
       <div class="result-header">
         <div>
           <h3 id="resultTitle">Round Result</h3>
-          <p id="resultDescription">Result appears here.</p>
+          <p id="resultDescription">Correct answer will appear here.</p>
         </div>
         <div id="roundScoreBadge" class="score-badge">+0</div>
       </div>
-
       <div class="result-grid">
-        <div><span>Correct location</span><strong id="actualPlaceText">—</strong></div>
+        <div><span>Actual place</span><strong id="actualPlaceText">—</strong></div>
         <div><span>Distance</span><strong id="distanceText">—</strong></div>
         <div><span>Accuracy</span><strong id="accuracyText">—</strong></div>
       </div>
-
-      <div class="answer-box">
-        <span>Answer note</span>
-        <p id="answerNote">—</p>
-      </div>
-
-      <button id="nextRoundBtn" class="neon-btn" type="button">Next Round ➜</button>
+      <p id="answerNote" class="answer-note">—</p>
+      <button id="nextRoundBtn" class="btn primary" type="button">Next Round ➜</button>
     </section>
 
     <section id="finalScreen" class="screen-overlay hidden">
       <div class="glass-card final-card">
-        <div class="game-logo">🏁</div>
+        <div class="logo">🏁</div>
         <h1>Game Complete</h1>
-        <p id="finalMessage" class="lead">Your final score is ready.</p>
+        <p id="finalMessage">Great job.</p>
 
-        <div class="final-score-box">
+        <div class="final-score">
           <span id="finalScoreText">0</span>
-          <small id="finalScoreSmall">out of 5000</small>
+          <small id="finalScoreSmall">out of 5,000</small>
         </div>
 
         <form id="scoreForm" class="score-form">
-          <label>
-            <span>Player name for global leaderboard</span>
-            <input id="playerNameInput" type="text" maxlength="18" placeholder="Example: Mim" autocomplete="nickname" />
-          </label>
-          <button id="submitScoreBtn" class="neon-btn" type="submit">Submit Score 🌍</button>
+          <label for="playerNameInput">Player name for global leaderboard</label>
+          <div class="submit-row">
+            <input id="playerNameInput" type="text" maxlength="18" placeholder="Your name" autocomplete="nickname" />
+            <button id="submitScoreBtn" class="btn primary" type="submit">Submit Score 🌍</button>
+          </div>
         </form>
 
-        <div class="leaderboard-box">
-          <div class="leaderboard-head">
+        <div class="leaderboard-card">
+          <div class="leaderboard-header">
             <h2>🏆 Global Leaderboard</h2>
-            <button id="refreshLeaderboardBtn" class="mini-btn" type="button">Refresh</button>
+            <button id="refreshLeaderboardBtn" class="btn small" type="button">Refresh</button>
           </div>
-          <ol id="leaderboardList"></ol>
+          <ol id="leaderboardList"><li>Loading leaderboard...</li></ol>
         </div>
 
-        <button id="restartFinalBtn" class="neon-btn ghost" type="button">🔁 Play Again</button>
+        <button id="restartFinalBtn" class="btn ghost" type="button">🔁 Play Again</button>
       </div>
     </section>
   </main>
