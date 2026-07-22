@@ -20,26 +20,14 @@ import {
    Firebase setup guide is given after the project files.
 ========================================================= */
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_YOUR_PROJECT_ID",
-  storageBucket: "PASTE_YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-  appId: "PASTE_YOUR_APP_ID"
+  apiKey: "AIzaSyA8dY8GqTueEC6wTjhAJFSqkK4In_aAoVg",
+  authDomain: "neon-geoguess-arena.firebaseapp.com",
+  projectId: "neon-geoguess-arena",
+  storageBucket: "neon-geoguess-arena.firebasestorage.app",
+  messagingSenderId: "410876225250",
+  appId: "1:410876225250:web:658926590e0f91464560bb",
+  measurementId: "G-WLF5ESQ53S"
 };
-
-const FIREBASE_IS_CONFIGURED =
-  firebaseConfig.apiKey &&
-  !firebaseConfig.apiKey.includes("PASTE_") &&
-  firebaseConfig.projectId &&
-  !firebaseConfig.projectId.includes("PASTE_");
-
-let db = null;
-
-if (FIREBASE_IS_CONFIGURED) {
-  const app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-}
 
 /* =========================================================
    EXAM-INSPIRED LOCATION QUESTION POOL
