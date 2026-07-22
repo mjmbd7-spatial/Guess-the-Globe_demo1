@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050816" />
+  <title>Neon GeoQuiz Arena</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="loadingScreen" class="loading-screen" aria-live="polite">
+    <div class="loader-ring"></div>
+    <h1>Loading GeoQuiz Arena</h1>
+    <p>Preparing map, countries, and global leaderboard...</p>
+  </div>
+
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+  <main class="app">
+    <div id="map" aria-label="Interactive world map"></div>
+
+    <section id="toast" class="toast hidden" role="status"></section>
+
+    <section id="gameHud" class="game-hud hidden" aria-label="Game status">
+      <div class="hud-card question-card">
+        <span class="hud-label">🧠 Exam-style geography question</span>
+        <h2 id="questionText">Question appears here</h2>
+        <p id="questionMeta">Category • Source style</p>
+      </div>
+
+      <div class="hud-card stats-card">
+        <div class="stat"><span>Round</span><strong id="roundDisplay">1/5</strong></div>
+        <div class="stat"><span>Score</span><strong id="scoreDisplay">0</strong></div>
+        <div class="stat"><span>Timer</span><strong id="timerDisplay">30s</strong></div>
+      </div>
+
+      <div class="hud-actions">
+        <button id="restartTopBtn" class="neon-btn ghost" type="button">↻ Restart</button>
+      </div>
+    </section>
+
+    <section id="mapTools" class="map-tools hidden" aria-label="Map settings">
+      <label>
+        <span>🗺️ Basemap</span>
+        <select id="basemapSelect">
+          <option value="dark">Neon Dark</option>
+          <option value="light">Clean Light</option>
+          <option value="osm">Classic OSM</option>
+          <option value="terrain">Terrain</option>
+          <option value="satellite">Satellite</option>
+        </select>
+      </label>
+
+      <label>
+        <span>🔍 Max zoom: <b id="maxZoomValue">12</b></span>
+        <input id="maxZoomRange" type="range" min="5" max="18" value="12" />
+      </label>
+    </section>
+
+    <section id="startScreen" class="screen-overlay">
+      <div class="glass-card start-card">
+        <div class="game-logo">🌐</div>
+        <h1>Neon GeoQuiz Arena</h1>
+        <p class="lead">Answer geography questions by clicking the correct place on the map. Built with Leaflet, Firebase Firestore, multiple basemaps, mobile-first UI, and a global leaderboard.</p>
+
+        <div id="firebaseStatus" class="status-card warning">
+          ⚠️ Firebase is not configured yet. The game will still run, but the global leaderboard needs your Firebase config.
+        </div>
+
+        <div class="settings-grid">
+          <label>
+            <span>Difficulty</span>
+            <select id="difficultySelect">
+              <option value="easy">Easy — 45s, flexible zoom</option>
+              <option value="medium" selected>Medium — 30s</option>
+              <option value="hard">Hard — 18s, stricter zoom</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Rounds</span>
+            <select id="roundCountSelect">
+              <option value="5" selected>5 rounds</option>
+              <option value="10">10 rounds</option>
+              <option value="15">15 rounds</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="feature-grid">
+          <div><strong>🏆</strong><span>Global leaderboard</span></div>
+          <div><strong>📱</strong><span>Android friendly</span></div>
+          <div><strong>🛰️</strong><span>Basemap variety</span></div>
+          <div><strong>🎉</strong><span>Confetti rewards</span></div>
+        </div>
+
+        <button id="playBtn" class="neon-btn" type="button">▶ Play Game</button>
+      </div>
+    </section>
+
+    <section id="resultPanel" class="result-panel hidden" aria-live="polite">
+      <div class="result-header">
+        <div>
+          <h3 id="resultTitle">Round Result</h3>
+          <p id="resultDescription">Result appears here.</p>
+        </div>
+        <div id="roundScoreBadge" class="score-badge">+0</div>
+      </div>
+
+      <div class="result-grid">
+        <div><span>Correct location</span><strong id="actualPlaceText">—</strong></div>
+        <div><span>Distance</span><strong id="distanceText">—</strong></div>
+        <div><span>Accuracy</span><strong id="accuracyText">—</strong></div>
+      </div>
+
+      <div class="answer-box">
+        <span>Answer note</span>
+        <p id="answerNote">—</p>
+      </div>
+
+      <button id="nextRoundBtn" class="neon-btn" type="button">Next Round ➜</button>
+    </section>
+
+    <section id="finalScreen" class="screen-overlay hidden">
+      <div class="glass-card final-card">
+        <div class="game-logo">🏁</div>
+        <h1>Game Complete</h1>
+        <p id="finalMessage" class="lead">Your final score is ready.</p>
+
+        <div class="final-score-box">
+          <span id="finalScoreText">0</span>
+          <small id="finalScoreSmall">out of 5000</small>
+        </div>
+
+        <form id="scoreForm" class="score-form">
+          <label>
+            <span>Player name for global leaderboard</span>
+            <input id="playerNameInput" type="text" maxlength="18" placeholder="Example: Mim" autocomplete="nickname" />
+          </label>
+          <button id="submitScoreBtn" class="neon-btn" type="submit">Submit Score 🌍</button>
+        </form>
+
+        <div class="leaderboard-box">
+          <div class="leaderboard-head">
+            <h2>🏆 Global Leaderboard</h2>
+            <button id="refreshLeaderboardBtn" class="mini-btn" type="button">Refresh</button>
+          </div>
+          <ol id="leaderboardList"></ol>
+        </div>
+
+        <button id="restartFinalBtn" class="neon-btn ghost" type="button">🔁 Play Again</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>

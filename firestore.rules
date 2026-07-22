@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /leaderboard/{scoreId} {
+      allow read: if true;
+
+      allow create: if
+        request.resource.data.keys().hasOnly([
+          'playerName',
+          'score',
+          'difficulty',
+          'rounds',
+          'maxPossible',
+          'createdAt',
+          'userAgentLite'
+        ]) &&
+        request.resource.data.playerName is string &&
+        request.resource.data.playerName.size() >= 2 &&
+        request.resource.data.playerName.size() <= 18 &&
+        request.resource.data.score is int &&
+        request.resource.data.score >= 0 &&
+        request.resource.data.score <= 15000 &&
+        request.resource.data.difficulty in ['Easy', 'Medium', 'Hard'] &&
+        request.resource.data.rounds in [5, 10, 15] &&
+        request.resource.data.maxPossible in [5000, 10000, 15000] &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.userAgentLite in ['Android', 'iOS', 'Windows', 'Mac', 'Other'];
+
+      allow update, delete: if false;
+    }
+  }
+}
